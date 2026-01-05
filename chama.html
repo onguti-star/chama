@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Contribution Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #c7d2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .date {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .stat-card.blue {
+            background: #dbeafe;
+        }
+
+        .stat-card.green {
+            background: #d1fae5;
+        }
+
+        .stat-card.purple {
+            background: #e9d5ff;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .stat-card.blue .stat-label {
+            color: #1e40af;
+        }
+
+        .stat-card.green .stat-label {
+            color: #065f46;
+        }
+
+        .stat-card.purple .stat-label {
+            color: #6b21a8;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .stat-card.blue .stat-value {
+            color: #1e3a8a;
+        }
+
+        .stat-card.green .stat-value {
+            color: #064e3b;
+        }
+
+        .stat-card.purple .stat-value {
+            color: #581c87;
+        }
+
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .user-card {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .status-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .user-details {
+            margin-bottom: 16px;
+        }
+
+        .user-detail {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .user-detail strong {
+            color: #1f2937;
+        }
+
+        .status-text {
+            font-weight: 600;
+        }
+
+        .status-text.completed {
+            color: #059669;
+        }
+
+        .status-text.pending {
+            color: #dc2626;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-warning {
+            background: #eab308;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #ca8a04;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .button-group .btn {
+            width: auto;
+            padding: 10px 24px;
+        }
+
+        .notifications {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 4px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .notification.success {
+            background: #d1fae5;
+            border-color: #10b981;
+        }
+
+        .notification.warning {
+            background: #fef3c7;
+            border-color: #f59e0b;
+        }
+
+        .notification.info {
+            background: #dbeafe;
+            border-color: #3b82f6;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: #1f2937;
+            flex: 1;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: #6b7280;
+            margin-left: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 0;
+            color: #9ca3af;
+        }
+
+        @media (max-width: 640px) {
+            .card {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>
+                    <span>💰</span>
+                    Daily Contribution Tracker
+                </h1>
+                <div class="date">
+                    <span>📅</span>
+                    <span id="currentDate"></span>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-label">👥 Contributors Today</div>
+                    <div class="stat-value" id="contributorCount">0/4</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-label">💵 Total Pool</div>
+                    <div class="stat-value" id="totalPool">KES 0.00</div>
+                </div>
+                <div class="stat-card purple">
+                    <div class="stat-label">📅 Daily Goal</div>
+                    <div class="stat-value">KES 20</div>
+                </div>
+                <div class="stat-card blue">
+                    <div class="stat-label">📊 Weekly Goal</div>
+                    <div class="stat-value">KES 140</div>
+                </div>
+            </div>
+
+            <div class="users-grid" id="usersGrid"></div>
+
+            <div class="button-group">
+                <button class="btn btn-warning" onclick="checkMissing()">
+                    Check Missing Contributions
+                </button>
+                <button class="btn btn-secondary" onclick="resetWeekly()">
+                    Reset Weekly (New Week)
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom: 16px; color: #1f2937;">Notifications</h2>
+            <div class="notifications" id="notifications">
+                <div class="empty-state">No notifications yet</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let users = [
+            { id: 1, name: 'Morara', dailyGoal: 20, weeklyGoal: 140, contributed: false, totalContributed: 0, weeklyContributed: 0, lastContributionDate: null },
+            { id: 2, name: 'Osoro', dailyGoal: 20, weeklyGoal: 140, contributed: false, totalContributed: 0, weeklyContributed: 0, lastContributionDate: null },
+            { id: 3, name: 'Alvoo', dailyGoal: 20, weeklyGoal: 140, contributed: false, totalContributed: 0, weeklyContributed: 0, lastContributionDate: null },
+            { id: 4, name: 'Omumia', dailyGoal: 20, weeklyGoal: 140, contributed: false, totalContributed: 0, weeklyContributed: 0, lastContributionDate: null }
+        ];
+
+        let lastResetDate = new Date().toDateString();
+
+        let notifications = [];
+
+        function init() {
+            updateDate();
+            checkAndResetDaily();
+            renderUsers();
+            updateStats();
+        }
+
+        function updateDate() {
+            const date = new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('currentDate').textContent = date;
+        }
+
+        function renderUsers() {
+            const grid = document.getElementById('usersGrid');
+            grid.innerHTML = users.map(user => `
+                <div class="user-card">
+                    <div class="user-header">
+                        <div class="user-name">${user.name}</div>
+                        <div class="status-icon">
+                            ${user.contributed ? '✅' : '❌'}
+                        </div>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-detail">
+                            Daily Goal: <strong>KES ${user.dailyGoal} per day</strong>
+                        </div>
+                        <div class="user-detail">
+                            Weekly Goal: <strong>KES ${user.weeklyGoal} per week</strong>
+                        </div>
+                        <div class="user-detail">
+                            This Week: <strong style="color: #059669;">KES ${user.weeklyContributed.toFixed(2)}</strong> / KES ${user.weeklyGoal}
+                        </div>
+                        <div class="user-detail">
+                            Remaining: <strong style="color: #dc2626;">KES ${(user.weeklyGoal - user.weeklyContributed).toFixed(2)}</strong>
+                        </div>
+                        <div class="user-detail">
+                            Total All Time: <strong style="color: #059669;">KES ${user.totalContributed.toFixed(2)}</strong>
+                        </div>
+                        <div class="user-detail">
+                            Status: <span class="status-text ${user.contributed ? 'completed' : 'pending'}">
+                                ${user.contributed ? 'Completed Today' : 'Pending'}
+                            </span>
+                        </div>
+                    </div>
+                    ${!user.contributed ? `
+                        <button class="btn btn-primary" onclick="markContribution(${user.id})">
+                            Send KES 20 Today
+                        </button>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function markContribution(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user && !user.contributed) {
+                user.contributed = true;
+                user.totalContributed += user.dailyGoal;
+                user.weeklyContributed += user.dailyGoal;
+                
+                const remainingForWeek = user.weeklyGoal - user.weeklyContributed;
+                
+                addNotification(
+                    `${user.name} has sent KES ${user.dailyGoal} today! Weekly: KES ${user.weeklyContributed}/${user.weeklyGoal} (KES ${remainingForWeek} remaining this week)`,
+                    'success'
+                );
+                
+                renderUsers();
+                updateStats();
+            }
+        }
+
+        function checkMissing() {
+            users.forEach(user => {
+                if (!user.contributed) {
+                    addNotification(
+                        `Reminder: ${user.name} has not made their daily contribution of KES ${user.dailyGoal} yet!`,
+                        'warning'
+                    );
+                }
+            });
+        }
+
+        function resetWeekly() {
+            // Show confirmation warning
+            const confirmed = confirm(
+                '⚠️ WARNING: You are about to reset the weekly contributions!\n\n' +
+                'This will:\n' +
+                '• Reset all weekly contribution amounts to KES 0\n' +
+                '• Reset all daily contribution status\n' +
+                '• Keep total all-time contributions\n\n' +
+                'Are you sure you want to start a new week?'
+            );
+            
+            if (!confirmed) {
+                return; // User clicked Cancel, do nothing
+            }
+            
+            users.forEach(user => {
+                user.weeklyContributed = 0;
+                user.contributed = false;
+            });
+            
+            addNotification('New week started! Weekly contributions reset. Goal: KES 20 per day for 7 days = KES 140', 'info');
+            updateDate();
+            renderUsers();
+            updateStats();
+        }
+
+        // Auto-reset daily contributions at midnight
+        function checkAndResetDaily() {
+            const now = new Date();
+            const today = now.toDateString();
+            
+            if (lastResetDate !== today) {
+                users.forEach(user => {
+                    user.contributed = false;
+                });
+                lastResetDate = today;
+                addNotification('New day! Daily contributions have been reset. Remember to send KES 20 today!', 'info');
+                renderUsers();
+                updateStats();
+            }
+        }
+
+        // Check for daily reset every 30 seconds
+        setInterval(checkAndResetDaily, 30000);
+
+        function addNotification(message, type) {
+            const time = new Date().toLocaleTimeString();
+            notifications.unshift({ message, type, time });
+            notifications = notifications.slice(0, 10);
+            renderNotifications();
+        }
+
+        function renderNotifications() {
+            const container = document.getElementById('notifications');
+            
+            if (notifications.length === 0) {
+                container.innerHTML = '<div class="empty-state">No notifications yet</div>';
+                return;
+            }
+            
+            container.innerHTML = notifications.map(notif => `
+                <div class="notification ${notif.type}">
+                    <div class="notification-message">${notif.message}</div>
+                    <div class="notification-time">${notif.time}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const contributedCount = users.filter(u => u.contributed).length;
+            const totalPool = users.reduce((sum, u) => sum + u.totalContributed, 0);
+            
+            document.getElementById('contributorCount').textContent = `${contributedCount}/4`;
+            document.getElementById('totalPool').textContent = `KES ${totalPool.toFixed(2)}`;
+        }
+
+        init();
+    </script>
+</body>
+</html>
